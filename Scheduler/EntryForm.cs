@@ -81,6 +81,7 @@ internal sealed class EntryForm : Form
         content.Controls.Add(ErrorLabel, 0, 9);
         var actions = new FlowLayoutPanel { Dock = DockStyle.Fill, FlowDirection = FlowDirection.RightToLeft, Margin = Padding.Empty };
         var cancel = new PillButton { Text = "Cancel", Fill = Color.FromArgb(235, 237, 230), TextColour = Palette.Ink, Size = new Size(88, 36), DialogResult = DialogResult.Cancel };
+        cancel.Click += (_, _) => Close();
         actions.Controls.Add(SaveButton);
         actions.Controls.Add(cancel);
         content.Controls.Add(actions, 0, 10);

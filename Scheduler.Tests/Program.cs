@@ -4,27 +4,57 @@ using Scheduler;
 
 namespace Scheduler.Tests;
 
-internal static class Program
+internal static partial class Program
 {
     private static int checks;
 
     [STAThread]
     private static int Main(string[] args)
     {
-        Application.SetHighDpiMode(HighDpiMode.PerMonitorV2);
+        Application.SetUnhandledExceptionMode(UnhandledExceptionMode.ThrowException);
+        Application.SetHighDpiMode(args.Contains("--dpi-unaware") ? HighDpiMode.DpiUnaware : HighDpiMode.PerMonitorV2);
         Application.EnableVisualStyles();
         Application.SetCompatibleTextRenderingDefault(false);
         var testDirectory = Path.Combine(Path.GetTempPath(), "SchedulerChecks-" + Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(testDirectory);
         try
         {
-            CheckValidation();
-            CheckPersistence(testDirectory);
-            CheckBadFiles(testDirectory);
-            CheckFailedSaves(testDirectory);
-            CheckWindows(testDirectory, args.FirstOrDefault());
-            Console.WriteLine($"Passed {checks} checks.");
-            return 0;
+            var failures = new List<string>();
+            var groups = 0;
+            void Run(string name, Action action)
+            {
+                groups++;
+                Console.WriteLine($"\nGROUP: {name}");
+                try { action(); }
+                catch (Exception exception)
+                {
+                    failures.Add(name);
+                    Console.Error.WriteLine($"FAIL: {name}\n{exception}");
+                }
+            }
+
+            Run("Validation regression", CheckValidation);
+            Run("Validation boundaries and every minute of the day", CheckValidationBoundaries);
+            Run("Persistence regression", () => CheckPersistence(testDirectory));
+            Run("Overlap, adjacency and rejected mutations", () => CheckScheduleBoundaries(Area(testDirectory, "schedule")));
+            Run("Malformed file regression", () => CheckBadFiles(testDirectory));
+            Run("Storage formats, replacements and compatibility", () => CheckStorageCases(Area(testDirectory, "storage")));
+            Run("Locked file regression", () => CheckFailedSaves(testDirectory));
+            Run("Storage failure and recovery", () => CheckStorageRecovery(Area(testDirectory, "recovery")));
+            Run("Embedded and packaged icons", CheckIconAssets);
+            if (!args.Contains("--model-only"))
+            {
+                Run("Window and full workflow regression", () => CheckWindows(testDirectory, args.FirstOrDefault(arg => !arg.StartsWith("--"))));
+                Run("Editor fields, palette and cancellation", CheckEditorBehaviour);
+                Run("Editor failures and retries", CheckEditorFailures);
+                Run("Main window counters and scrolling", () => CheckMainWindowCounters(Area(testDirectory, "window-counters")));
+                Run("Keyboard accept and cancel", CheckEditorKeyboard);
+                Run("Timeline geometry, scrolling and disposal", CheckTimelineBehaviour);
+                Run("Button rendering and interaction states", CheckButtonStates);
+            }
+            Console.WriteLine($"\n{checks} assertions passed; {groups - failures.Count}/{groups} groups passed.");
+            if (failures.Count > 0) Console.Error.WriteLine("Failed groups: " + string.Join(", ", failures));
+            return failures.Count == 0 ? 0 : 1;
         }
         catch (Exception exception)
         {
@@ -33,9 +63,20 @@ internal static class Program
         }
         finally
         {
-            foreach (var file in Directory.EnumerateFiles(testDirectory)) File.Delete(file);
-            Directory.Delete(testDirectory);
+            // Only delete the unique directory this run created under the OS temp directory.
+            var fullPath = Path.GetFullPath(testDirectory);
+            var tempRoot = Path.GetFullPath(Path.GetTempPath()).TrimEnd(Path.DirectorySeparatorChar) + Path.DirectorySeparatorChar;
+            if (!fullPath.StartsWith(tempRoot, StringComparison.OrdinalIgnoreCase) || !Path.GetFileName(fullPath).StartsWith("SchedulerChecks-"))
+                throw new InvalidOperationException("Unexpected test cleanup path.");
+            Directory.Delete(fullPath, recursive: true);
         }
+    }
+
+    private static string Area(string root, string name)
+    {
+        var path = Path.Combine(root, name);
+        Directory.CreateDirectory(path);
+        return path;
     }
 
     private static ScheduleTask Task(string title = "Focus", int start = 9 * 60, int end = 10 * 60) => new()

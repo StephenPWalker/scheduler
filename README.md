@@ -75,17 +75,18 @@ window title bars. The ICO includes 16, 20, 24, 32, 40, 48, 64, 96, 128 and
 256px versions with transparent backgrounds. Both assets ship in the release's
 `Assets` folder.
 
-## Checks
+## Tests
 
-The dependency-free C# check runner covers time validation, ordering,
-persistence, failed saves, malformed files and the real Windows Forms controls:
+All tests live in `Scheduler.Tests`, separate from the application. The
+dependency-free C# runner covers scheduling rules, persistence, failure/retry
+paths, icons, keyboard behaviour and real Windows Forms controls:
 
 ```powershell
-dotnet run --project Scheduler.Tests
+dotnet run --project Scheduler.Tests -c Release
 ```
 
-UI checks include the title bar, initial position, minimize/restore/close,
-foreground behaviour, empty schedules, the 23:59 boundary and button
-background rendering at the current Windows display scale.
+Tests use isolated temporary task files and leave your saved schedule alone.
+See [the test guide](Scheduler.Tests/README.md) for the coverage matrix,
+96-DPI and non-window modes, and manual Windows integration checks.
 
 See [LICENSE](LICENSE) and [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md).

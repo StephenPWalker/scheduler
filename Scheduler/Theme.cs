@@ -70,7 +70,7 @@ internal sealed class PillButton : Button
         var scale = DeviceDpi / 96f;
         var bounds = new Rectangle(1, 1, Width - 3, Height - 3);
         using var path = Palette.Rounded(bounds, Height / 2);
-        var colour = !Enabled ? Color.FromArgb(232, 235, 228) : pressed && hovered ? ControlPaint.Dark(Fill, 0.16f) : hovered ? ControlPaint.Dark(Fill, 0.07f) : Fill;
+        var colour = !Enabled ? Color.FromArgb(232, 235, 228) : pressed ? ControlPaint.Dark(Fill, 0.16f) : hovered ? ControlPaint.Dark(Fill, 0.07f) : Fill;
         using var brush = new SolidBrush(colour);
         e.Graphics.FillPath(brush, path);
         if (FlatAppearance.BorderSize > 0)
