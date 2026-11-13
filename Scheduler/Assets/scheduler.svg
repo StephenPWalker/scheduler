@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="256" height="256" role="img" aria-labelledby="title description">
+  <title id="title">Scheduler</title>
+  <desc id="description">An ivory calendar with a checkmark on a rounded forest-green tile.</desc>
+  <!-- Original artwork. Licensed under the repository's MIT license. -->
+  <rect x="2" y="2" width="60" height="60" rx="14" fill="#365B46" />
+  <rect x="13" y="15" width="38" height="38" rx="6" fill="#FAF9F6" />
+  <line x1="14" y1="28" x2="50" y2="28" stroke="#E3EDDF" stroke-width="2" />
+  <line x1="23" y1="12" x2="23" y2="21" stroke="#A8C2A3" stroke-width="4" stroke-linecap="round" />
+  <line x1="41" y1="12" x2="41" y2="21" stroke="#A8C2A3" stroke-width="4" stroke-linecap="round" />
+  <polyline points="22,40 29,47 43,34" fill="none" stroke="#365B46" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" />
+</svg>

@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <ApplicationHighDpiMode>PerMonitorV2</ApplicationHighDpiMode>
+    <ApplicationDefaultFont>Segoe UI, 9pt</ApplicationDefaultFont>
+    <AssemblyName>Scheduler</AssemblyName>
+    <RootNamespace>Scheduler</RootNamespace>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <ApplicationIcon>Assets/scheduler.ico</ApplicationIcon>
+  </PropertyGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="Scheduler.Tests" />
+    <EmbeddedResource Include="Assets/scheduler.ico" LogicalName="Scheduler.AppIcon.ico" />
+    <None Update="Assets/scheduler.svg" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="Assets/scheduler.ico" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="../LICENSE" Link="LICENSE" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="../THIRD-PARTY-NOTICES.md" Link="THIRD-PARTY-NOTICES.md" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+</Project>
